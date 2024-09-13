@@ -1,5 +1,5 @@
 import { usersTable } from "@/app/db/schema";
-import { db } from "./db/init";
+import { db } from "./db";
 
 export default async function Home() {
   const allUsers = await db.select().from(usersTable);
