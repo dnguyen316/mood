@@ -7,7 +7,9 @@ export default function Home() {
           This is the best app for tracking your mood through out your life.
         </p>
         <div>
-          <button>get started</button>
+          <button className="bg-blue-600 p-4 rounded-lg text-xl">
+            get started
+          </button>
         </div>
       </div>
     </div>
