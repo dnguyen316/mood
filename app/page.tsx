@@ -1,8 +1,8 @@
-import { users } from "@/drizzle/schema";
+import { usersTable } from "@/app/db/schema";
 import { db } from "./db/init";
 
 export default async function Home() {
-  const allUsers = await db.select().from(users);
+  const allUsers = await db.select().from(usersTable);
 
   console.log(allUsers);
 
