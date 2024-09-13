@@ -1,4 +1,11 @@
-export default function Home() {
+import { users } from "@/drizzle/schema";
+import { db } from "./db/init";
+
+export default async function Home() {
+  const allUsers = await db.select().from(users);
+
+  console.log(allUsers);
+
   return (
     <div className="w-screen h-screen bg-black flex justify-center items-center text-white">
       <div className="w-full max-w-[600px] mx-auto">
