@@ -15,6 +15,13 @@
       "when": 1726254032899,
       "tag": "0001_nostalgic_maelstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1726315682288,
+      "tag": "0002_lucky_karen_page",
+      "breakpoints": true
     }
   ]
 }
