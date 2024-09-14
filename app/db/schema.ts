@@ -10,7 +10,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
-export const usersTable = pgTable("users_table", {
+export const usersTable = pgTable("users", {
   id: serial("id").primaryKey(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
@@ -21,7 +21,7 @@ export const usersTable = pgTable("users_table", {
 });
 
 export const journalEntryTable = pgTable(
-  "journal_entry_table",
+  "journal_entries",
   {
     id: serial("id").primaryKey(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -43,15 +43,8 @@ export const journalEntryTable = pgTable(
   }
 );
 
-export const journalEntryRelations = relations(
-  journalEntryTable,
-  ({ one }) => ({
-    analysisTable: one(analysisTable),
-  })
-);
-
 export const analysisTable = pgTable(
-  "analysis_table",
+  "analyses",
   {
     id: serial("id").primaryKey(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -75,6 +68,13 @@ export const analysisTable = pgTable(
       entryIdIdx: uniqueIndex("entry_id_unique_idx").on(table.entryId),
     };
   }
+);
+
+export const journalEntryRelations = relations(
+  journalEntryTable,
+  ({ one }) => ({
+    analysis: one(analysisTable),
+  })
 );
 
 export type InsertUser = typeof usersTable.$inferInsert;
