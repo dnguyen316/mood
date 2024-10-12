@@ -27,9 +27,6 @@ CREATE TABLE IF NOT EXISTS "users" (
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-DROP TABLE "analysis_table";--> statement-breakpoint
-DROP TABLE "journal_entry_table";--> statement-breakpoint
-DROP TABLE "users_table";--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "analyses" ADD CONSTRAINT "analyses_entry_id_journal_entries_id_fk" FOREIGN KEY ("entry_id") REFERENCES "public"."journal_entries"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION

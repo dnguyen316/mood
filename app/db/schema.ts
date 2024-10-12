@@ -4,14 +4,14 @@ import {
   index,
   integer,
   pgTable,
-  serial,
   text,
   timestamp,
   uniqueIndex,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
@@ -23,7 +23,7 @@ export const usersTable = pgTable("users", {
 export const journalEntryTable = pgTable(
   "journal_entries",
   {
-    id: serial("id").primaryKey(),
+    id: uuid("id").primaryKey(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()
@@ -38,7 +38,7 @@ export const journalEntryTable = pgTable(
   },
   (table) => {
     return {
-      userIdIdx: index("user_id_idx").on(table.userId),
+      userIdIdx: index("user_id_idx").on(table.userId, table.id),
     };
   }
 );
@@ -46,7 +46,7 @@ export const journalEntryTable = pgTable(
 export const analysisTable = pgTable(
   "analyses",
   {
-    id: serial("id").primaryKey(),
+    id: uuid("id").primaryKey(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()
@@ -73,7 +73,10 @@ export const analysisTable = pgTable(
 export const journalEntryRelations = relations(
   journalEntryTable,
   ({ one }) => ({
-    analysis: one(analysisTable),
+    analysis: one(analysisTable, {
+      fields: [journalEntryTable.id],
+      references: [analysisTable.entryId],
+    }),
   })
 );
 
