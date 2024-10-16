@@ -14,6 +14,9 @@ export const getEntries = async () => {
         orderBy: (journalEntryTable, { desc }) => [
           desc(journalEntryTable.createdAt),
         ],
+        with: {
+          analyses: true,
+        },
       });
     } catch (dbError) {
       `Error querying journalEntryTable: ${

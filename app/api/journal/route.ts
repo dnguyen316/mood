@@ -1,5 +1,6 @@
 import { db } from "@/app/db";
-import { journalEntryTable } from "@/app/db/schema";
+import { analysisTable, journalEntryTable } from "@/app/db/schema";
+import { analyze } from "@/app/utils/ai";
 import { getUserByClerkID } from "@/app/utils/auth";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
@@ -9,19 +10,30 @@ export const POST = async (request: Request) => {
     // const data = await request.json();
     const user = await getUserByClerkID();
     if (user?.id) {
-      await db.insert(journalEntryTable).values({
-        content: "this is new entry",
-        userId: user?.id!,
-      });
+      const entry = await db
+        .insert(journalEntryTable)
+        .values({
+          content: "Write about your day!",
+          userId: user?.id!,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning()
+        .then((data) => data[0]);
 
-      const createdEntry = await db.query.journalEntryTable.findFirst({
-        where: (entry, { eq }) => eq(entry.userId, user?.id!),
-        orderBy: (entry, { desc }) => [desc(entry.id)],
-      });
-
-      revalidatePath("/journal");
-
-      return NextResponse.json({ data: createdEntry });
+      if (entry.content) {
+        const analysis = await analyze(entry?.content);
+        if (analysis) {
+          await db.insert(analysisTable).values({
+            entryId: entry.id,
+            userId: user?.id,
+            ...analysis,
+          });
+        }
+        console.log("entry::", entry);
+        revalidatePath("/journal");
+        return NextResponse.json({ data: entry });
+      }
     }
   } catch (error) {
     console.log(error);

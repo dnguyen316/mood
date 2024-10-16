@@ -1,7 +1,15 @@
+import { getEntry } from "@/actions/entry";
+import Analysis from "@/components/analysis";
+import Editor from "@/components/editor";
 
+const EntryPage = async ({ params }: { params: { id: string } }) => {
+  const entry = await getEntry(params.id);
 
-const EntryPage = ({ params }) => {
-  return <div>{params.id}</div>;
+  return (
+    <div className="h-full w-full grid grid-cols-3">
+      <Editor entry={entry} />
+    </div>
+  );
 };
 
 export default EntryPage;

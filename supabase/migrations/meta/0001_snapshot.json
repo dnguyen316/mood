@@ -1,6 +1,6 @@
 {
-  "id": "6052cc25-18db-4415-8616-ee650f5796ad",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "6e8f10b9-2896-4fa0-a87f-5971bf716cec",
+  "prevId": "6052cc25-18db-4415-8616-ee650f5796ad",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -186,7 +186,8 @@
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "created_at": {
           "name": "created_at",

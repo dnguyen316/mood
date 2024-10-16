@@ -1,24 +1,25 @@
 CREATE TABLE IF NOT EXISTS "analyses" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp NOT NULL,
 	"mood" text,
+	"subject" text,
 	"summary" text,
 	"color" text,
 	"negative" boolean,
-	"entry_id" integer NOT NULL
+	"entry_id" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "journal_entries" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp NOT NULL,
-	"user_id" integer NOT NULL,
+	"user_id" uuid NOT NULL,
 	"content" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp NOT NULL,
 	"clerk_id" text NOT NULL,
@@ -40,4 +41,4 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "entry_id_unique_idx" ON "analyses" USING btree ("entry_id");--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "user_id_idx" ON "journal_entries" USING btree ("user_id");
+CREATE UNIQUE INDEX IF NOT EXISTS "user_id_id_unique_idx" ON "journal_entries" USING btree ("user_id","id");

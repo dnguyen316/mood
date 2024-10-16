@@ -1,6 +1,6 @@
 {
-  "id": "6052cc25-18db-4415-8616-ee650f5796ad",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "466289bf-e439-4129-8099-2633df462f3a",
+  "prevId": "6e8f10b9-2896-4fa0-a87f-5971bf716cec",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -63,6 +63,12 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
@@ -80,6 +86,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "user_id_idx": {
+          "name": "user_id_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -89,6 +110,19 @@
           "tableTo": "journal_entries",
           "columnsFrom": [
             "entry_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "analyses_user_id_users_id_fk": {
+          "name": "analyses_user_id_users_id_fk",
+          "tableFrom": "analyses",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -186,7 +220,8 @@
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "created_at": {
           "name": "created_at",
