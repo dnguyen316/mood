@@ -4,6 +4,7 @@ import {
   index,
   integer,
   pgTable,
+  real,
   text,
   timestamp,
   uniqueIndex,
@@ -60,7 +61,7 @@ export const analysisTable = pgTable(
     summary: text("summary"),
     color: text("color"),
     negative: boolean("negative"),
-
+    sentimentScore: real("sentiment_score").default(0),
     entryId: uuid("entry_id")
       .notNull()
       .references(() => journalEntryTable.id, {

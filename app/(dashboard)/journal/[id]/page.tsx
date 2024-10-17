@@ -1,4 +1,4 @@
-import { getEntry } from "@/actions/entry";
+import { getEntry } from "@/app/_actions/entry";
 import Analysis from "@/components/analysis";
 import Editor from "@/components/editor";
 

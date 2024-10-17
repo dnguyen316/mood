@@ -1,6 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { mockCurrentUser } from "./__mocks/user";
-import { NextResponse } from "next/server";
+import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { isAPIPath } from "./app/libs/function";
+import { ratelimit } from "./app/libs/limter";
 
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
@@ -9,33 +11,55 @@ const isProtectedRoute = createRouteMatcher([
   "/journal(.*)",
 ]);
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) {
-    // Check if the app is running in development mode
-    const isDev = process.env.NODE_ENV === "development";
+export default clerkMiddleware(
+  async (auth, req: NextRequest, event: NextFetchEvent) => {
+    //Rate limit apis.
+    if (
+      isAPIPath(req.nextUrl.pathname) &&
+      req.nextUrl.pathname !== "/api/blocked"
+    ) {
+      const ip = req.ip ?? "127.0.0.1";
+      const { success, pending, limit, reset, remaining } =
+        await ratelimit.limit(`ratelimit_middleware_${ip}`);
+      event.waitUntil(pending);
 
-    // Use Clerk authentication in production, or mock authentication in development
-    let authData;
+      const res = success
+        ? NextResponse.next()
+        : NextResponse.redirect(new URL("/api/blocked", req.url));
 
-    if (isDev) {
-      // Mock the user in development mode
-      authData = { userId: mockCurrentUser().id };
-      console.log("Mocking user in development:", mockCurrentUser());
-      const { userId } = authData || {};
+      res.headers.set("X-RateLimit-Limit", limit.toString());
+      res.headers.set("X-RateLimit-Remaining", remaining.toString());
+      res.headers.set("X-RateLimit-Reset", reset.toString());
+      return res;
+    }
 
-      // If no user is authenticated, redirect to the login page
-      if (!userId) {
-        const loginUrl = new URL("/sign-in", req.url);
-        return NextResponse.redirect(loginUrl);
+    if (isProtectedRoute(req)) {
+      // Check if the app is running in development mode
+      const isDev = process.env.NODE_ENV === "development";
+
+      // Use Clerk authentication in production, or mock authentication in development
+      let authData;
+
+      if (isDev) {
+        // Mock the user in development mode
+        authData = { userId: mockCurrentUser().id };
+        console.log("Mocking user in development:", mockCurrentUser());
+        const { userId } = authData || {};
+
+        // If no user is authenticated, redirect to the login page
+        if (!userId) {
+          const loginUrl = new URL("/sign-in", req.url);
+          return NextResponse.redirect(loginUrl);
+        }
+
+        // Continue with the request if user is authenticated
+        return NextResponse.next();
+      } else {
+        auth().protect();
       }
-
-      // Continue with the request if user is authenticated
-      return NextResponse.next();
-    } else {
-      auth().protect();
     }
   }
-});
+);
 
 export const config = {
   matcher: [

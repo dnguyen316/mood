@@ -1,4 +1,4 @@
-import { createNewUser } from "../../actions/user";
+import { createNewUser } from "../_actions/user";
 
 const NewUserPage = async () => {
   await createNewUser();

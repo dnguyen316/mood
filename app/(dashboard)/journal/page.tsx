@@ -1,6 +1,6 @@
 import EntryCard from "@/components/entry-card";
 import NewEntryCard from "@/components/new-entry-card";
-import { getEntries } from "@/actions/journal";
+import { getEntries } from "@/app/_actions/journal";
 import Link from "next/link";
 import Question from "@/components/question";
 

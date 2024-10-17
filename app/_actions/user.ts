@@ -1,8 +1,8 @@
 "use server";
 
 import { currentUser } from "@clerk/nextjs/server";
-import { db } from "../app/db";
-import { journalEntryTable, usersTable } from "../app/db/schema";
+import { db } from "../db";
+import { journalEntryTable, usersTable } from "../db/schema";
 import { redirect } from "next/navigation";
 import { mockCurrentUser } from "@/__mocks/user";
 
